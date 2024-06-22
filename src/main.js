@@ -1,3 +1,13 @@
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
+
+import { searchImg } from './js/pixabay-api.js';
+import {
+  createElements,
+  showLoader,
+  hideLoader,
+} from './js/render-functions.js';
+
 export const refs = {
   formEl: document.querySelector('.form-el'),
   inputEl: document.querySelector('.input-search'),

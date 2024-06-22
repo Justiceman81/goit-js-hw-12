@@ -1,8 +1,9 @@
+import axios from 'axios';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 import { createElements } from './render-functions.js';
 
-export function searchImg(img) {
+export async function searchImg(img) {
   const BASE_URL = 'https://pixabay.com';
   const END_POINT = '/api/';
   const options = new URLSearchParams({
@@ -13,11 +14,15 @@ export function searchImg(img) {
     safesearch: true,
   });
   const url = `${BASE_URL}${END_POINT}?${options}`;
-  return fetch(url).then(data => {
-    if (!data.ok) {
-      throw new Error(data.status);
-    } else {
-      return data.json();
-    }
-  });
+
+  try {
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    iziToast.error({
+      title: 'Error',
+      message: `Something went wrong: ${error.message}`,
+    });
+    throw error;
+  }
 }
