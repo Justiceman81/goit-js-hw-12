@@ -50,7 +50,8 @@
   color: #808080;
   padding-left: 16px;
 }
-.btn-search {
+.btn-search,
+.btn-load-more {
   font-family: 'Montserrat', sans-serif;
   font-weight: 500;
   font-size: 16px;
@@ -59,13 +60,21 @@
   color: #fff;
   border-radius: 8px;
   padding: 8px 16px;
-  width: 91px;
+  min-width: 91px;
   height: 40px;
   background-color: #4e75ff;
   border: none;
 }
-.btn-search:hover {
+.btn-search:hover,
+.btn-load-more:hover {
   background-color: #6c8cff;
+}
+.btn-load-more {
+  display: block;
+  margin: 0 auto;
+}
+.btn-load-more.hidden {
+  display: none;
 }
 .img-list {
   display: flex;

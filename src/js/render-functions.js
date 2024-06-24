@@ -29,3 +29,9 @@ export function showLoader() {
 export function hideLoader() {
   refs.loader.classList.add('hidden');
 }
+export function showLoadMore() {
+  refs.loadMore.classList.remove('hidden');
+}
+export function hideLoadMore() {
+  refs.loadMore.classList.add('hidden');
+}
