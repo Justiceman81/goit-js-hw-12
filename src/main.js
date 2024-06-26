@@ -1,5 +1,7 @@
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import { searchImg } from './js/pixabay-api.js';
 import {
@@ -12,68 +14,71 @@ import {
 
 let page = 1;
 let searchQuery = null;
+let lightbox = new SimpleLightbox('.gallery a');
 
 export const refs = {
   formEl: document.querySelector('.form-el'),
   inputEl: document.querySelector('.input-search'),
+  listEl: document.querySelector('.img-list'),
   imgGallery: document.querySelector('.gallery'),
   loader: document.querySelector('.loader'),
   loadMore: document.querySelector('.btn-load-more'),
 };
-
-refs.formEl.addEventListener('submit', async event => {
-  event.preventDefault();
+refs.formEl.addEventListener('submit', async e => {
+  e.preventDefault();
   refs.imgGallery.innerHTML = '';
   showLoader();
   hideLoadMore();
   page = 1;
-  searchQuery = event.currentTarget.elements['search'].value.trim();
+  searchQuery = e.currentTarget.elements['search'].value.trim();
   try {
     const res = await searchImg(searchQuery, page);
-    if (res.total > 0);
-    {
+    if (res.totalHits > 0) {
       iziToast.success({
         position: 'topRight',
-        message: `We find ${res.total} photos`,
+        message: `We found ${res.totalHits} photos`,
       });
     }
-    if (res.total.length === 0) {
+    if (res.hits.length === 0) {
       iziToast.error({
         position: 'topRight',
         message:
           'Sorry, there are no images matching your search query. Please try again!',
       });
     }
-    refs.imgGallery.innerHTML = createElements(res);
-    if (res.total > 12) {
+    refs.imgGallery.innerHTML = createElements(res.hits);
+    lightbox.refresh();
+    if (res.totalHits > 15) {
       showLoadMore();
     }
   } catch (error) {
     console.log(error);
   } finally {
-    event.target.reset();
+    e.target.reset();
     hideLoader();
   }
 });
 
 refs.loadMore.addEventListener('click', async () => {
   page++;
-  showLoadMore();
+  showLoader();
   try {
     const res = await searchImg(searchQuery, page);
-    refs.imgGallery.insertAdjacentHTML('beforeend', createElements(res));
-    // function scroll
-    const { height: cardHeight } = document
-      .querySelector('.img-list')
-      .firstElementChild.getBoundingClientRect();
+    const newElements = createElements(res.hits);
+    refs.imgGallery.insertAdjacentHTML('beforeend', newElements);
+    lightbox.refresh();
+
+    const cardHeight = document
+      .querySelector('.gallery')
+      .lastElementChild.getBoundingClientRect().height;
 
     window.scrollBy({
       top: cardHeight * 2,
       behavior: 'smooth',
     });
-    //
-    const lastPage = Math.ceil(res.total / 15);
-    if (page === lastPage) {
+
+    const lastPage = Math.ceil(res.totalHits / 15);
+    if (page >= lastPage) {
       hideLoadMore();
       iziToast.info({
         position: 'topRight',

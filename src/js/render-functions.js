@@ -1,13 +1,11 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import { searchImg } from './pixabay-api.js';
 import { refs } from '../main.js';
 
 const lightbox = new SimpleLightbox('.gallery a');
-const listEl = document.querySelector('.img-list');
+
 export function createElements(values) {
-  const gallery = refs.imgGallery;
-  const markup = values.hits
+  return values
     .map(value => {
       return `<li class="list-el">
                 <a href="${value.largeImageURL}"><img src='${value.webformatURL}' alt='${value.tags}'></a>
@@ -20,8 +18,6 @@ export function createElements(values) {
             </li>`;
     })
     .join('');
-  gallery.innerHTML = markup;
-  lightbox.refresh();
 }
 export function showLoader() {
   refs.loader.classList.remove('hidden');
